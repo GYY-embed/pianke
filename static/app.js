@@ -2037,24 +2037,23 @@ async function decide(action) {
   }
 
   const animDone = sleep(VERDICT_HOLD_MS);
-  let r, s;
+  let r;
   try {
     r = await fetchJSON("/api/choose", {
       method: "POST",
       body: JSON.stringify({ loser }),
     });
+    await animDone;
+    const s = await fetchJSON("/api/status");
+    if (r.done) { enterDone(s); return; }
+    renderGroup(r.group, s);
   } catch (err) {
-    busy = false;
     left.classList.remove("is-winner", "is-loser");
     right.classList.remove("is-winner", "is-loser");
     toast("出错了：" + err.message);
-    return;
+  } finally {
+    busy = false;
   }
-  await animDone;
-  s = await fetchJSON("/api/status");
-  if (r.done) { busy = false; enterDone(s); return; }
-  renderGroup(r.group, s);
-  busy = false;
 }
 
 async function kickSide(side) {
