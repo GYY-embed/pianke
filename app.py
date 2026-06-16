@@ -1570,6 +1570,23 @@ def _serialize_image_meta(path: Optional[str]) -> Optional[dict]:
     return SESSION.meta.get(path)
 
 
+_DISPLAY_COMPANION_PRIORITY = (
+    ".jpg", ".jpeg", ".tif", ".tiff", ".png",
+    ".heic", ".heif", ".hif", ".webp", ".bmp",
+)
+
+
+def _display_path_for(path: Optional[str]) -> Optional[str]:
+    if not path or SESSION is None:
+        return path
+    companions = SESSION.companions.get(path, [])
+    for ext in _DISPLAY_COMPANION_PRIORITY:
+        for comp in companions:
+            if Path(comp).suffix.lower() == ext:
+                return comp
+    return path
+
+
 def _members_for(group: GroupState) -> list[dict]:
     """组内每张图的状态。"""
     out = []
@@ -1591,7 +1608,12 @@ def _members_for(group: GroupState) -> list[dict]:
             status = "winner"
         else:
             status = "pending"
-        out.append({"path": p, "name": Path(p).name, "status": status})
+        out.append({
+            "path": p,
+            "display_path": _display_path_for(p),
+            "name": Path(p).name,
+            "status": status,
+        })
     return out
 
 
@@ -1642,10 +1664,13 @@ def _serialize_group(g: GroupState, idx: int) -> dict:
         "remaining_in_group": (1 if g.left else 0) + (1 if g.right else 0) + len(g.pending),
         "left": g.left,
         "right": g.right,
+        "left_display": _display_path_for(g.left),
+        "right_display": _display_path_for(g.right),
         "left_meta": _serialize_image_meta(g.left),
         "right_meta": _serialize_image_meta(g.right),
         "members": _members_for(g),
         "next_preload": g.pending[0] if g.pending else None,
+        "next_preload_display": _display_path_for(g.pending[0]) if g.pending else None,
         "pending_count": len(g.pending),
         "loser_count": len(g.losers),
         "winner": g.winner,

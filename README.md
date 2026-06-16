@@ -49,6 +49,7 @@
 - ⚔️ **左右擂台两两对决**：按 `←` / `→` 选哪边更好，一组里只留一张（或几张），节奏极快。
 - 📸 **原生支持 RAW**：
   - **RAW+JPG 同名双拍**：以 JPG 显示与分析，归档时 RAW 跟着自动一起搬走（含 `.xmp` 伴随文件）。
+  - **RAW+HEIF/HIF 同名双拍**：支持相机生成的 `.HEIF/.HEIC/.HIF` companion，归档时与 RAW 成对移动。
   - **纯 RAW**：从 RAW 文件里直接取出预览图，秒级读图，不卡。
 - 🔄 **随时反悔、随时续做**：
   - **多级撤销**：单步撤销、整组重选、全局回头都可以。
@@ -241,8 +242,8 @@ python app.py --port 8080 --no-browser
 </details>
 
 <details>
-<summary><b>7. HEIC 格式图片在网页上无法预览？</b></summary>
-Windows 系统可能需要安装微软官方的 HEIF 扩展才能正常在浏览器中预览该格式；片刻工具在后端能够正常分析处理该格式。
+<summary><b>7. HEIC/HEIF/HIF 格式图片在网页上无法预览？</b></summary>
+Windows 系统可能需要安装微软官方的 HEIF 扩展才能正常在浏览器中预览该格式；片刻工具在后端能够正常分析处理 `.HEIC/.HEIF/.HIF`。
 </details>
 
 ---

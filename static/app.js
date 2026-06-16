@@ -1877,7 +1877,7 @@ function renderStrip(members) {
   cap.forEach((m) => {
     const cell = document.createElement("div");
     cell.className = `strip-cell strip-${m.status}`;
-    cell.innerHTML = `<img loading="lazy" src="${imgUrl(m.path, 128)}" alt="">`;
+    cell.innerHTML = `<img loading="lazy" src="${imgUrl(m.display_path || m.path, 128)}" alt="">`;
     cell.title = m.name + " · " + m.status;
     cell.addEventListener("click", () => openLightbox({ path: m.path, name: m.name }));
     strip.appendChild(cell);
@@ -1931,8 +1931,8 @@ function renderGroup(group, sessionStatus) {
   $("arena").classList.toggle("single-mode", single);
   $("single-banner").classList.toggle("hidden", !single);
 
-  swapImage("img-left", "side-left", group.left);
-  swapImage("img-right", "side-right", group.right);
+  swapImage("img-left", "side-left", group.left_display || group.left);
+  swapImage("img-right", "side-right", group.right_display || group.right);
 
   renderExifLine("exif-left", group.left_meta, group.right_meta);
   renderExifLine("exif-right", group.right_meta, group.left_meta);
@@ -1946,7 +1946,7 @@ function renderGroup(group, sessionStatus) {
 
   $("btn-undo").disabled = !group.can_undo;
 
-  if (group.next_preload) $("preload").src = imgUrl(group.next_preload);
+  if (group.next_preload) $("preload").src = imgUrl(group.next_preload_display || group.next_preload);
 
   updateTitle("arena");
 }

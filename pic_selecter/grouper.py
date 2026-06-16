@@ -26,10 +26,10 @@ except Exception:
     pass
 
 # PIL 直接能解码的格式
-IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".heic", ".heif", ".webp", ".bmp", ".tif", ".tiff"}
+IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".heic", ".heif", ".hif", ".webp", ".bmp", ".tif", ".tiff"}
 
 # RAW 格式：靠 rawpy 提取内嵌 JPEG 预览图来分析，原文件搬运时整个搬。
-# 如果同 stem 同目录有 JPG/JPEG 等 IMAGE_EXTS 文件，则优先用那个（更高质量，不需要 rawpy）。
+# 如果同 stem 同目录有 JPG/JPEG/HEIF 等 IMAGE_EXTS 文件，则优先用那个（更高质量，不需要 rawpy）。
 RAW_EXTS = {
     ".cr2", ".cr3", ".crw",        # Canon
     ".nef", ".nrw",                # Nikon
@@ -294,7 +294,7 @@ def _compute_orb(img_t: Image.Image, nfeatures: int = 500):
 # ---------------- 单文件处理 ----------------
 
 # IMAGE_EXTS 内的优先级：用作 RAW companion 时按这个顺序挑分析源
-_COMPANION_PRIORITY = [".jpg", ".jpeg", ".tif", ".tiff", ".png", ".heic", ".heif", ".webp", ".bmp"]
+_COMPANION_PRIORITY = [".jpg", ".jpeg", ".tif", ".tiff", ".png", ".heic", ".heif", ".hif", ".webp", ".bmp"]
 
 
 def _load_image_for_analysis(path: str, companions: list[str]) -> Image.Image:
@@ -303,7 +303,7 @@ def _load_image_for_analysis(path: str, companions: list[str]) -> Image.Image:
     - 普通图片（IMAGE_EXTS）：直接 Image.open。
     - RAW 文件（RAW_EXTS）：
       1. 优先用同 stem 同目录的 companion 图片（按 _COMPANION_PRIORITY 顺序）。
-         这是 RAW+JPG 双拍工作流——直接用同名 JPG，零 RAW 解码开销。
+         这是 RAW+JPG/HEIF 双拍工作流——直接用同名图片，零 RAW 解码开销。
       2. 没有 companion → 用 rawpy.extract_thumb() 提取 RAW 内嵌的 JPEG 预览图。
          所有主流 RAW 都内嵌全分辨率或半分辨率 JPEG，提取只需毫秒级（不做 demosaic）。
 

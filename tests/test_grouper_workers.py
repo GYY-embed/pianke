@@ -1,6 +1,26 @@
 from pic_selecter import grouper
 
 
+def test_scan_folder_pairs_sony_raw_hif(tmp_path):
+    raw = tmp_path / "DSC05032.ARW"
+    hif = tmp_path / "DSC05032.HIF"
+    raw.touch()
+    hif.touch()
+
+    pairs = grouper.scan_folder(str(tmp_path))
+
+    assert pairs == [(str(raw), [str(hif)])]
+
+
+def test_scan_folder_accepts_standalone_hif(tmp_path):
+    hif = tmp_path / "DSC05033.HIF"
+    hif.touch()
+
+    pairs = grouper.scan_folder(str(tmp_path))
+
+    assert pairs == [(str(hif), [])]
+
+
 def test_default_expert_workers_stays_single_on_cpu(monkeypatch):
     monkeypatch.delenv("PIC_SELECTER_EXPERT_WORKERS", raising=False)
     monkeypatch.setattr("pic_selecter.vision._device_type", lambda: "cpu")

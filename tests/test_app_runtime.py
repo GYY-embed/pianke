@@ -27,3 +27,25 @@ def test_apply_runtime_selection_resets_cached_device(monkeypatch):
 
     assert os.environ["PIC_SELECTER_RUNTIME"] == "cpu"
     assert vision._DEVICE is None
+
+
+def test_serialize_group_uses_hif_companion_for_display(monkeypatch, tmp_path):
+    raw = str(tmp_path / "DSC05032.ARW")
+    hif = str(tmp_path / "DSC05032.HIF")
+    session = app_module.SessionState(
+        folder=str(tmp_path),
+        dry_run=True,
+        mode="copy",
+        groups=[],
+        companions={raw: [hif]},
+    )
+    group = app_module.GroupState(id="abcdef123456", images=[raw], left=raw)
+
+    monkeypatch.setattr(app_module, "SESSION", session)
+
+    data = app_module._serialize_group(group, 0)
+
+    assert data["left"] == raw
+    assert data["left_display"] == hif
+    assert data["members"][0]["path"] == raw
+    assert data["members"][0]["display_path"] == hif
